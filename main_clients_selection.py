@@ -9,7 +9,7 @@ from options import args_parser
 from client import *
 from server import *
 import copy
-import matplotlib.pyplot as plt
+
 import time
 import random
 from resnet import resnet32
@@ -58,7 +58,7 @@ def create_client_server():
         new_client = Client(args=args, dataset=dataset_train_flip, idxs=new_idxs, w=copy.deepcopy(net_glob.state_dict()))
         clients.append(new_client)
 
-    server = Server(args = args, w = copy.deepcopy(net_glob.state_dict()))
+    server = Server(args = args, w = copy.deepcopy(net_glob.state_dict()),test_dataset=dataset_test)
 
     return clients, server
 
@@ -149,7 +149,7 @@ if __name__ == '__main__':
     if not os.path.exists(results_save_path):
         os.mkdir(results_save_path)
 
-    np.save(os.path.join(results_save_path,'loss_cifar10_s4_uni{}_round100_bs100_ep1_lr1-e2_m5e-1.npy'.format(str(args.corruption_ratio).replace('.',''))),acc_test_100_epoch)
+    np.save(os.path.join(results_save_path,'sharply_cifar10_s4_uni{}_round100_bs100_ep1_lr1-e2_m5e-1.npy'.format(str(args.corruption_ratio).replace('.',''))),acc_test_100_epoch)
 
 
 

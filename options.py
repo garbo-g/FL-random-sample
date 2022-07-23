@@ -6,7 +6,8 @@ import argparse
 def args_parser():
     parser = argparse.ArgumentParser()
     # experiment arguments
-    parser.add_argument('--mode', type=str, default='plain', help="plain, DP, or Paillier")
+    parser.add_argument('--mode', type=str, default='fed_GTG_SV'
+                        , help="plain, DP, or Paillier,fed_GTG_SV")
 
     # federated arguments
     parser.add_argument('--rounds', type=int, default=100, help="rounds of training")
