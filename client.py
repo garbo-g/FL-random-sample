@@ -71,7 +71,9 @@ class Client():
             for k in w_new.keys():
                 delta_w[k] = w_new[k] - w_old[k]
         # print('delta_w',np.shape(delta_w))
-
+        if self.args.mode == 'fed_GTG_SV':
+            for k in w_new.keys():
+                delta_w[k] = w_new[k] - w_old[k]
         '''
         1. part one
             DP mechanism
