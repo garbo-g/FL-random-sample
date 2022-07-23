@@ -2,7 +2,7 @@ import copy
 from typing import Callable, Optional
 
 import numpy as np
-# from cyy_naive_lib.log import get_logger
+from cyy_naive_lib.log import get_logger
 
 from shapley_value import ShapleyValue
 
@@ -33,24 +33,19 @@ class GTGShapleyValue(ShapleyValue):
                 + np.random.randint(-5, +5),
             ),
         )
-        # get_logger().info("max_number %s", self.max_number)
+        get_logger().info("max_number %s", self.max_number)
 
     def compute(self):
-        # print("6666666")
-        # print(self.metric_fun)
         assert self.metric_fun is not None
-
         self.round_number += 1
         this_round_metric = self.metric_fun(
             self.round_number, set(range(self.worker_number))
         )
         if this_round_metric is None:
-            # get_logger().warning("force stop")
+            get_logger().warning("force stop")
             return
-        print('1111111',self.last_round_metric)
-        print('2222222',this_round_metric[0])
         if (
-            abs(self.last_round_metric - this_round_metric[1])# abs(self.last_round_metric - this_round_metric[0])
+            abs(self.last_round_metric - this_round_metric)
             <= self.round_trunc_threshold
         ):
             self.shapley_values[self.round_number] = {
@@ -65,13 +60,13 @@ class GTGShapleyValue(ShapleyValue):
                     self.shapley_values[self.round_number],
                     self.shapley_values_S[self.round_number],
                 )
-            # get_logger().info(
-            #     "skip round %s, this_round_metric %s last_round_metric %s round_trunc_threshold %s",
-            #     self.round_number,
-            #     this_round_metric,
-            #     self.last_round_metric,
-            #     self.round_trunc_threshold,
-            # )
+            get_logger().info(
+                "skip round %s, this_round_metric %s last_round_metric %s round_trunc_threshold %s",
+                self.round_number,
+                this_round_metric,
+                self.last_round_metric,
+                self.round_trunc_threshold,
+            )
             self.last_round_metric = this_round_metric
             return
         metrics = dict()
@@ -99,26 +94,25 @@ class GTGShapleyValue(ShapleyValue):
                 for j in range(1, self.worker_number + 1):
                     subset = tuple(sorted(perturbed_indices[:j].tolist()))
                     # truncation
-                    if abs(this_round_metric[0] - v[j - 1]) >= self.eps:
+                    if abs(this_round_metric - v[j - 1]) >= self.eps:
                         if subset not in metrics:
                             if not subset:
                                 metric = self.last_round_metric
                             else:
-                                metric = self.metric_fun(self.round_number, subset)[1]
+                                metric = self.metric_fun(self.round_number, subset)
                                 if metric is None:
-                                    # get_logger().warning("force stop")
+                                    get_logger().warning("force stop")
                                     return
-                            # get_logger().info(
-                            #     "round %s subset %s metric %s",
-                            #     self.round_number,
-                            #     subset,
-                            #     metric,
-                            # )
+                            get_logger().info(
+                                "round %s subset %s metric %s",
+                                self.round_number,
+                                subset,
+                                metric,
+                            )
                             metrics[subset] = metric
                         v[j] = metrics[subset]
                     else:
                         v[j] = v[j - 1]
-
 
                     # update SV
                     marginal_contribution[perturbed_indices[j - 1]] = v[j] - v[j - 1]
