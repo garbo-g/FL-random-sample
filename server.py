@@ -38,24 +38,15 @@ class Server():
         return acc
 
     def __fed_avg_algorithm(self, worker_ids):
-
-        update_w_avg = copy.deepcopy(self.clients_update_w[0])
-
-
-        clients_update_w = copy.deepcopy(self.clients_update_w)
-        print('111111')
-        print(clients_update_w)
-        for k in update_w_avg.keys():
-            for i in range(1, len(self.clients_update_w)):
-                update_w_avg[k] += self.clients_update_w[i][k]
-        assert clients_update_w
-        first_client = next(iter(clients_update_w))
+        first_client = self.clients_update_w[0]
         avg_update = {}
         for k in first_client:
-            updates = [client_update[k] for client_update in clients_update_w]
+            updates = [client_update[k] for client_update in self.clients_update_w]
             avg_update[k] = sum(updates) / len(updates)
         parameters = copy.deepcopy(self.model.state_dict())
         for k in parameters:
+            if "num_batches_tracked" in k:
+                continue
             parameters[k] += avg_update[k]
         return parameters
 
