@@ -2,7 +2,7 @@ import copy
 from typing import Callable, Optional
 
 import numpy as np
-from cyy_naive_lib.log import get_logger
+# from cyy_naive_lib.log import get_logger
 
 from shapley_value import ShapleyValue
 
@@ -33,7 +33,7 @@ class GTGShapleyValue(ShapleyValue):
                 + np.random.randint(-5, +5),
             ),
         )
-        get_logger().info("max_number %s", self.max_number)
+        # get_logger().info("max_number %s", self.max_number)
 
     def compute(self):
         assert self.metric_fun is not None
@@ -42,7 +42,7 @@ class GTGShapleyValue(ShapleyValue):
             self.round_number, set(range(self.worker_number))
         )
         if this_round_metric is None:
-            get_logger().warning("force stop")
+            # get_logger().warning("force stop")
             return
         if (
             abs(self.last_round_metric - this_round_metric)
@@ -60,13 +60,13 @@ class GTGShapleyValue(ShapleyValue):
                     self.shapley_values[self.round_number],
                     self.shapley_values_S[self.round_number],
                 )
-            get_logger().info(
-                "skip round %s, this_round_metric %s last_round_metric %s round_trunc_threshold %s",
-                self.round_number,
-                this_round_metric,
-                self.last_round_metric,
-                self.round_trunc_threshold,
-            )
+            # get_logger().info(
+            #     "skip round %s, this_round_metric %s last_round_metric %s round_trunc_threshold %s",
+            #     self.round_number,
+            #     this_round_metric,
+            #     self.last_round_metric,
+            #     self.round_trunc_threshold,
+            # )
             self.last_round_metric = this_round_metric
             return
         metrics = dict()
@@ -103,12 +103,12 @@ class GTGShapleyValue(ShapleyValue):
                                 if metric is None:
                                     get_logger().warning("force stop")
                                     return
-                            get_logger().info(
-                                "round %s subset %s metric %s",
-                                self.round_number,
-                                subset,
-                                metric,
-                            )
+                            # get_logger().info(
+                            #     "round %s subset %s metric %s",
+                            #     self.round_number,
+                            #     subset,
+                            #     metric,
+                            # )
                             metrics[subset] = metric
                         v[j] = metrics[subset]
                     else:
@@ -172,10 +172,10 @@ class GTGShapleyValue(ShapleyValue):
                 self.shapley_values[self.round_number],
                 self.shapley_values_S[self.round_number],
             )
-        get_logger().info("shapley_value %s", self.shapley_values[self.round_number])
-        get_logger().info(
-            "shapley_value_S %s", self.shapley_values_S[self.round_number]
-        )
+        # get_logger().info("shapley_value %s", self.shapley_values[self.round_number])
+        # get_logger().info(
+        #     "shapley_value_S %s", self.shapley_values_S[self.round_number]
+        # )
         self.last_round_metric = this_round_metric
 
     def not_convergent(self, index, contribution_records):
@@ -195,11 +195,11 @@ class GTGShapleyValue(ShapleyValue):
         )
         if np.max(errors) > self.converge_criteria:
             return True
-        get_logger().info(
-            "convergent for index %s and converge_min %s max error %s converge_criteria %s",
-            index,
-            self.converge_min,
-            np.max(errors),
-            self.converge_criteria,
-        )
+        # get_logger().info(
+        #     "convergent for index %s and converge_min %s max error %s converge_criteria %s",
+        #     index,
+        #     self.converge_min,
+        #     np.max(errors),
+        #     self.converge_criteria,
+        # )
         return False
