@@ -38,7 +38,7 @@ class Client():
         time1=time.time()
         w_old = copy.deepcopy(self.model.state_dict())
         net = copy.deepcopy(self.model)
-        self.ldr_train = DataLoader(DatasetSplit(self.dataset, self.idxs), batch_size=self.args.local_bs,sampler=WeightedRandomSampler(self.client_train_weight,int(len(self.dataset) /self.args.num_users)))
+        self.ldr_train = DataLoader(DatasetSplit(self.dataset, self.idxs), batch_size=self.args.local_bs,sampler=WeightedRandomSampler(self.client_train_weight,int(len(self.dataset) /self.args.num_users),replacement=False))
         # tmp_train_weight=copy.deepcopy(self.client_train_weight)
         self.client_train_weight=[]
         net.train()
